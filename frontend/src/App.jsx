@@ -4,23 +4,24 @@ import './App.css'
 import { useAuthContext } from '@asgardeo/auth-react'
 
 function App() {
-  const { state, signIn, signOut} = useAuthContext();
+  const { state, signIn, signOut, getAccessToken} = useAuthContext();
 
-  const accessToken = state.accessToken;
+  const accessToken = state.token.access_token;
 
   const [response, setResponse] = useState({ message: "No data fetched yet." });
   const [loading, setLoading] = useState(false);
   const fetchData = async () => {
     try{
       setLoading(true);
-      if (!accessToken) {
+      const token = await getAccessToken();
+      if (!token) {
         throw new Error("No access token available.");
         
       }
       const apiResponse = await fetch("https://99a2fd36-7b2a-4765-a19d-b98e3d92616c-dev.e1-us-east-azure.choreoapis.dev/securegatewayproject/securegatewaybackend/v1.0/data",
         {
           headers:{
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${token}`
           }
         }
       )
@@ -54,7 +55,7 @@ function App() {
              <h3>Secret Data Area</h3>
              <p>This is where your Ballerina API data will load later.</p>
              {/* 4. Added button to trigger the fetch function */}
-             <button onClick={fetchData} disabled={loading || !accessToken}>
+             <button onClick={fetchData} disabled={loading || !state.isAuthenticated}>
                 {loading ? 'Fetching...' : 'Fetch Secure Data'}
              </button>
              
