@@ -13,6 +13,10 @@ function App() {
   const fetchData = async () => {
     try{
       setLoading(true);
+      if (!accessToken) {
+        throw new Error("No access token available.");
+        
+      }
       const apiResponse = await fetch("https://99a2fd36-7b2a-4765-a19d-b98e3d92616c-dev.e1-us-east-azure.choreoapis.dev/securegatewayproject/securegatewaybackend/v1.0/data",
         {
           headers:{
