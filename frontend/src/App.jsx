@@ -6,7 +6,7 @@ import { useAuthContext } from '@asgardeo/auth-react'
 function App() {
   const { state, signIn, signOut, getAccessToken} = useAuthContext();
 
-  const accessToken = state.token.access_token;
+  const accessToken = state.accessToken;
 
   const [response, setResponse] = useState({ message: "No data fetched yet." });
   const [loading, setLoading] = useState(false);
