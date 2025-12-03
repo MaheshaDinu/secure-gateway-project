@@ -8,7 +8,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>WSO2 Secure Gateway Project</h1>
+      <div className='heading'><img className='logo'  src="./src/assets/secure_logo.png" alt="secure_logo" /><h1> Secure Gateway Project</h1></div>
       
       {state.isAuthenticated ? (
         // UI SHOWN WHEN LOGGED IN
