@@ -4,7 +4,7 @@ import './App.css'
 import { useAuthContext } from '@asgardeo/auth-react'
 
 function App() {
-  const { state, signIn, signOut, getBasicUserInfo } = useAuthContext();
+  const { state, signIn, signOut} = useAuthContext();
 
   const accessToken = state.accessToken;
 
@@ -54,7 +54,7 @@ function App() {
              <h3>Secret Data Area</h3>
              <p>This is where your Ballerina API data will load later.</p>
              {/* 4. Added button to trigger the fetch function */}
-             <button onClick={fetchData} disabled={loading}>
+             <button onClick={fetchData} disabled={loading || !accessToken}>
                 {loading ? 'Fetching...' : 'Fetch Secure Data'}
              </button>
              
