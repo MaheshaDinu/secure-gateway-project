@@ -32,4 +32,7 @@ http:JwtValidatorConfig jwtConfig = {
         jwksConfig: {url: "[https://api.asgardeo.io/t/maheshadinushan/oauth2/jwks](https://api.asgardeo.io/t/maheshadinushan/oauth2/jwks)"}
     }
 };
-// ... Service code uses this jwtConfig for authorization
+// ... Service code uses this jwtConfig for authorization 
+```ballerina
+
+## 🎯 Technical Deep Dive: The Final Deadlock
