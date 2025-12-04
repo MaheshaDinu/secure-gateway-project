@@ -33,6 +33,6 @@ http:JwtValidatorConfig jwtConfig = {
     }
 };
 // ... Service code uses this jwtConfig for authorization 
-```ballerina
+```
 
 ## 🎯 Technical Deep Dive: The Final Deadlock
