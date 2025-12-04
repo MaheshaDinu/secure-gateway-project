@@ -2,15 +2,15 @@ import ballerina/http;
 
 //JWT validation configuration
 
-configurable string ASGARDEO_ISSUER = ?;
-configurable string ASGARDEO_AUDIENCE = ?;
-configurable string ASGARDEO_JWKS_URI = ?;
+// configurable string ASGARDEO_ISSUER = ?;
+// configurable string ASGARDEO_AUDIENCE = ?;
+// configurable string ASGARDEO_JWKS_URI = ?;
 
 http:JwtValidatorConfig jwtConfig = {
-    issuer: ASGARDEO_ISSUER,
-    audience: ASGARDEO_AUDIENCE,
+    issuer: "https://api.asgardeo.io/t/maheshadinushan",
+    audience: "kTDc0kR6LffgJsfmm8SuLErXRe4a",
     signatureConfig: {
-        jwksConfig: {url: ASGARDEO_JWKS_URI}
+        jwksConfig: {url: "https://api.asgardeo.io/t/maheshadinushan/oauth2/jwks"}
     }
 };
 
