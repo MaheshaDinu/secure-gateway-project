@@ -41,8 +41,8 @@ The primary technical challenge involved a configuration deadlock between the Id
 
 ### The Conflict
 
-**1.Token Claim(`iss`):**The JWT Access Token issued by Asgardeo contains the full endpoint URL as the Issuer:`.../oauth2/token`.
-**2.Validator Expectation:**Both the Ballerina code and the Choreo Connect Gateway initially expected the standard base URL:`.../t/maheshadinushan`.
+1. **Token Claim(`iss`):**The JWT Access Token issued by Asgardeo contains the full endpoint URL as the Issuer:`.../oauth2/token`.
+2. **Validator Expectation:**Both the Ballerina code and the Choreo Connect Gateway initially expected the standard base URL:`.../t/maheshadinushan`.
 
 ### The Resolution (Successful Debugging)
 
