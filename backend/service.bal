@@ -7,7 +7,7 @@ import ballerina/http;
 // configurable string ASGARDEO_JWKS_URI = ?;
 
 http:JwtValidatorConfig jwtConfig = {
-    issuer: "https://api.asgardeo.io/t/maheshadinushan",
+    issuer: "https://api.asgardeo.io/t/maheshadinushan/oauth2/token",
     audience: "kTDc0kR6LffgJsfmm8SuLErXRe4a",
     signatureConfig: {
         jwksConfig: {url: "https://api.asgardeo.io/t/maheshadinushan/oauth2/jwks"}
