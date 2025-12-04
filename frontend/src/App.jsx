@@ -1,84 +1,120 @@
-
 import { useState } from 'react';
-import './App.css'
-import { useAuthContext } from '@asgardeo/auth-react'
+import './App.css'; 
+import { useAuthContext } from '@asgardeo/auth-react';
 
 function App() {
-  const { state, signIn, signOut, getAccessToken} = useAuthContext();
-
-  const accessToken = state.accessToken;
-
-  const [response, setResponse] = useState({ message: "No data fetched yet." });
+  const { state, signIn, signOut, getAccessToken } = useAuthContext();
+  const [response, setResponse] = useState({ message: "Ready to fetch secure data." });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const fetchData = async () => {
-    try{
-      setLoading(true);
+    setError(null);
+    setLoading(true);
+    setResponse({ message: "Fetching data from Ballerina API..." });
+
+    try {
       const token = await getAccessToken();
       if (!token) {
-        throw new Error("No access token available.");
-        
+        throw new Error("Authentication failure: No access token available.");
       }
-      const apiResponse = await fetch("https://99a2fd36-7b2a-4765-a19d-b98e3d92616c-dev.e1-us-east-azure.choreoapis.dev/securegatewayproject/securegatewaybackend/v1.0/data",
-        {
-          headers:{
-            Authorization: `Bearer ${token}`
-          }
+
+      const apiUrl = "https://99a2fd36-7b2a-4765-a19d-b98e3d92616c-dev.e1-us-east-azure.choreoapis.dev/securegatewayproject/securegatewaybackend/v1.0/data";
+      
+      const apiResponse = await fetch(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`
         }
-      )
+      });
+
       if (!apiResponse.ok) {
-        throw new Error(`HTTP error! status: ${apiResponse.status}`);
+        // Attempt to read error message from backend if available
+        const errorText = await apiResponse.text();
+        throw new Error(`API Request Failed: HTTP ${apiResponse.status}. ${errorText.substring(0, 100)}`);
       }
+
       const data = await apiResponse.json();
       setResponse(data);
 
-    } catch (error) {
-      console.error("Error fetching data:", error);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError(err.message);
       setResponse({ message: "Failed to fetch data." });
-    } finally{
+    } finally {
       setLoading(false);
     }
-  }
+  };
+
+  const usernameDisplay = state.username || state.email || 'User';
 
   return (
-    <div className="App">
-      <div className='heading'><img className='logo'  src="./src/assets/secure_logo.png" alt="secure_logo" /><h1> Secure Gateway Project</h1></div>
+    <div className="app-container">
+      <header className="app-header">
+        <h1 className="header-title">Secure Gateway Project <span className="tag-line">Powered by Asgardeo & Choreo</span></h1>
+        {state.isAuthenticated && (
+          <button onClick={() => signOut()} className="btn-logout">
+            Logout
+          </button>
+        )}
+      </header>
       
-      {state.isAuthenticated ? (
-        // UI SHOWN WHEN LOGGED IN
-        <div className="dashboard">
-          <p>Welcome! You are securely logged in.</p>
-          <p>Username: <strong>{state.username}</strong></p>
-          
-          <button onClick={() => signOut()}>Logout</button>
-          
-          <div className="data-box">
-             <h3>Secret Data Area</h3>
-             <p>This is where your Ballerina API data will load later.</p>
-             {/* 4. Added button to trigger the fetch function */}
-             <button onClick={fetchData} disabled={loading || !state.isAuthenticated}>
-                {loading ? 'Fetching...' : 'Fetch Secure Data'}
-             </button>
-             
-             {/* 5. Display the structured response from Ballerina */}
-             {response.message && <p>API Status: **{response.message}**</p>}
-             {response.items && (
-                <ul>
-                    {response.items.map((item, index) => (
-                        <li key={index}>Item {item.id}: **{item.secret}**</li>
-                    ))}
-                </ul>
-             )}
+      <main className="main-content">
+        {!state.isAuthenticated ? (
+          <div className="auth-card">
+            <h2>🔒 Access Restricted</h2>
+            <p>This application demonstrates secure data access using **Asgardeo** for identity management and **Choreo** for the API gateway.</p>
+            <button onClick={() => signIn()} className="btn-primary">
+              Login with Asgardeo to continue
+            </button>
           </div>
-        </div>
-      ) : (
-        // UI SHOWN WHEN LOGGED OUT
-        <div className="login-area">
-          <p>You must log in to access the secure API.</p>
-          <button onClick={() => signIn()}>Login with Asgardeo</button>
-        </div>
-      )}
+        ) : (
+          <div className="dashboard">
+            <h2 className="welcome-message">
+              Welcome, {usernameDisplay}!
+            </h2>
+            <p className="status-indicator success">
+              ✅ Authentication Status: Connected
+            </p>
+            
+            <section className="data-fetch-section">
+              <h3>API Resource Access</h3>
+              <p>Your session token is active. Click below to access the Ballerina protected API.</p>
+              
+              <button 
+                onClick={fetchData} 
+                disabled={loading || !state.isAuthenticated}
+                className="btn-fetch"
+              >
+                {loading ? 'Fetching Data...' : 'Fetch Secure Data'}
+              </button>
+              
+              <div className={`response-box ${error ? 'error' : 'success'}`}>
+                <h4>API Response Status:</h4>
+                {error && <p className="response-error">ERROR: {error}</p>}
+                
+                {response.message && <p>Status Message: **{response.message}**</p>}
+                
+                {response.items && (
+                  <div className="response-data">
+                    <h5>Secure Data Items:</h5>
+                    <ul>
+                      {response.items.map((item, index) => (
+                        <li key={index}>Item {item.id}: **{item.secret}**</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </section>
+          </div>
+        )}
+      </main>
+      
+      <footer className="app-footer">
+        <p>© 2025 SecureGateway Demo</p>
+      </footer>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
