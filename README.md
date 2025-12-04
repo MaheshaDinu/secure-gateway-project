@@ -36,3 +36,34 @@ http:JwtValidatorConfig jwtConfig = {
 ```
 
 ## 🎯 Technical Deep Dive: The Final Deadlock
+
+The primary technical challenge involved a configuration deadlock between the Identity Provider (Asgardeo) and the Deployment Platform (Choreo), resulting in a persistent `401 Unauthorized` error.
+
+### The Conflict
+
+1.**Token Claim(`iss`):**The JWT Access Token issued by Asgardeo contains the full endpoint URL as the Issuer:`.../oauth2/token`
+2.**Validator Expectation:**Both the Ballerina code and the Choreo Connect Gateway initially expected the standard base URL:`.../t/maheshadinushan`
+
+### The Resolution (Successful Debugging)
+
+We successfully isolated the error by:
+* Debugging the token payload to prove the `iss` claim was incorrect.
+* Hardcoding the Ballerina service to accept the full `.../oauth2/token` URL.
+
+### Unresolved Platform Issue
+Despite the correct configuration being applied to the Ballerina code and the corresponding Choreo Secrets being updated and the component Redeployed, the Choreo Connect Gateway layer continues to reject the token with the `invalid_token` error.
+
+**Conclusion:** The configuration for the API Gateway's JWT validation cache appears to be locked to the default (short) Issuer URL, preventing the correctly configured traffic from reaching the backend service. This highlights a critical, advanced platform configuration barrier that requires further WSO2/Choreo support.
+
+## 🛠️ Project Setup
+
+### 1.Repository Structure
+```
+/
+|-- frontend/           # React (Vite) SPA
+|   |-- src/
+|   |-- package.json
+|-- backend/            # Ballerina Service Component
+|   |-- service.bal     # Secured API definition
+|   |-- Ballerina.toml
+|-- README.md ```
